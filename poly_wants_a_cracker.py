@@ -1,5 +1,6 @@
 FIELD = 8
 
+
 class Polynomial:
     def __init__(self, a=0):
         if a > 255:
@@ -14,7 +15,6 @@ class Polynomial:
         # pad with 0
         while len(self.polynomial) < FIELD:
             self.polynomial.insert(0, 0)
-        
 
     def toString(self):
         polyToString = ""
@@ -36,7 +36,7 @@ class Polynomial:
 
     def subPolynomial(self, other):
         return self.addOrSubOp(other)
- 
+
     def addOrSubOp(self, other):
         result = []
         s = self.polynomial[:]
@@ -50,10 +50,15 @@ class Polynomial:
 
     def multiplyPolynomial(self, other):
         times = 7
-        for i in range(0, 7):
+        s = Polynomial(0)
+        result = Polynomial(0)
+        for i in range(0, FIELD):
+            s.polynomial = self.polynomial[:]
             if other.polynomial[i] == 1:
-                self.multiplyByXTimes(times - 1)
+                s.multiplyByXTimes(times)
+                result.polynomial = result.addOrSubOp(s)
             times -= 1
+        return result.polynomial
 
     def multiplyByXTimes(self, times):
         for i in range(times):
@@ -64,7 +69,7 @@ class Polynomial:
         using m(x) = x^8 + x^4 + x^3 + x + 1
         as modulus polynomial"""
         aes_polynomial = [0, 0, 0, 1, 1, 0, 1, 1]
- 
+
         # shift left
         self.polynomial.append(0)
         mvb = self.polynomial.pop(0)
@@ -72,15 +77,7 @@ class Polynomial:
         if mvb == 1:
             for i in range(0, FIELD):
                 self.polynomial[i] = (self.polynomial[i] ^ aes_polynomial[i])
-        print "function: {}".format(self.polynomial)
 
 
 if __name__ == "__main__":
-    p = Polynomial(18)
-    print p.toString()
-    print p.polynomial
-    q = Polynomial(19)
-    print q.toString()
-    print q.polynomial
-    r = p.addPolynomial(q)
-    print r
+    p = Polynomial(87)
